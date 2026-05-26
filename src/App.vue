@@ -1,13 +1,59 @@
 <script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
 import { RouterView } from 'vue-router'
+import type { Product } from './types/types'
+import ky from 'ky'
+
+const products = ref<Product[]>([])
+
+onMounted(async () => {
+  const data = await ky.get<Product[]>('http://localhost:1452/api/products/').json()
+  products.value = data
+})
+
+const search = ref('')
+
+const showDropDown = ref(false)
+
+const filteredProducts = computed(() => {
+  if (!search.value) {
+    return []
+  }
+
+  return products.value
+    .filter((product) => product.name.toLowerCase().includes(search.value.toLowerCase()))
+    .slice(0, 3)
+})
 </script>
 <template>
   <div class="flex flex-col min-h-screen">
-    <header class="my-4 flex items-center justify-around">
+    <header class="my-4 flex justify-around">
       <RouterLink to="/"><img src="/Logo.svg" /></RouterLink>
-      <div class="flex bg-[#F5F5F5] py-5 px-4 w-92.5 gap-2 rounded-lg">
-        <img src="/Search.svg" />
-        <input class="outline-none" type="text" placeholder="Search" />
+      <div class="relative w-92.5">
+        <div class="relative w-full bg-[#F5F5F5] py-5 px-4 pl-12 rounded-lg">
+          <img class="absolute left-0 top-1/2 -translate-y-1/2" src="/Search.svg" />
+          <input
+            v-model="search"
+            class="outline-none"
+            @focus="showDropDown = true"
+            type="text"
+            placeholder="Search"
+          />
+        </div>
+        <div v-if="showDropDown && filteredProducts.length">
+          <RouterLink
+            :to="`/products/${product.id}`"
+            v-for="product in filteredProducts"
+            :key="product.id"
+            @click="showDropDown = false"
+          >
+            <div class="flex py-5">
+              <img class="w-15 h-15" :src="`http://localhost:1452/${product.images[0]}`" />
+              <p>{{ product.brand }} || {{ product.name }}</p>
+            </div>
+            <hr class="w-full" />
+          </RouterLink>
+        </div>
       </div>
       <div class="flex gap-6">
         <RouterLink to="/favorites"><img src="/Favorites.svg" /></RouterLink>

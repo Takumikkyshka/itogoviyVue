@@ -92,10 +92,10 @@ function toggleFilter(filter: Filter) {
           <hr class="text-[#B5B5B5]" />
         </div>
         <div v-show="filter.isOpen">
-          <label class="flex" v-for="option in filter.options" :key="option.label">
+          <label class="flex items-center" v-for="option in filter.options" :key="option.label">
             <input type="checkbox" v-model="option.checked" />
             <p class="ml-3">{{ option.label }}</p>
-            <p class="ml-auto">{{ option.count }}</p>
+            <p class="ml-1 text-sm text-[#929292]">{{ option.count }}</p>
           </label>
         </div>
       </div>
