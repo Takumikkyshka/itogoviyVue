@@ -13,4 +13,5 @@ import SummerSale from '@/components/IndexPage/SummerSale.vue'
   <PopularProducts></PopularProducts>
   <DiscountsItems></DiscountsItems>
   <SummerSale></SummerSale>
+  <div></div>
 </template>
